@@ -1,0 +1,16 @@
+package: awtranslator
+version: '0.1'
+author: Wolfgang Bund
+supportpage: www.redaxo.org/de/forum/
+
+page:
+    title: 'aw Translator'
+    icon: rex-icon fa-flag
+    subpages:
+        module_settings: { title: 'translate:modul_settings', perm: awtranslator[translator]}
+        exporter: { title: 'translate:exporter', perm: awtranslator[translator]}
+        importer: { title: 'translate:importer', perm: awtranslator[translator]}
+        langcopy: { title: 'translate:langcopy', perm: awtranslator[translator]}
+requires:
+    redaxo: '>=5.0.0'
+

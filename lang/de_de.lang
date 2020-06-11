@@ -1,0 +1,16 @@
+translator = Übersetzer
+title = Translator
+exporter = Export
+settings = Einstellungen
+export = Exportieren
+importer = Importieren
+import = Importieren
+langcopy = Sprache kopieren
+clearall = Kompletten Inhalt der Zielsprache vor der Kopie löschen
+import_file = Quelldatei auswählen
+confirm_proceed = Wollen Sie fortfahren?
+saved = Einstellungen gespeichert
+lang_copied = Sprache wurde kopiert.
+modul_settings = Moduleinstellungen
+
+import_info_text = Laden Sie hier die übersetzte Datei hoch und importieren Sie in die Artikel. Die Sprache wird automatisch erkannt. Es werden alle zuvor exportierten Sliceinhalte aktualisiert. Wichtig! Erstellen Sie vor dem Import ein Datenbank Backup über die Backup Funktion von Redaxo - sicher ist sicher. Profis machen das sowieso.
