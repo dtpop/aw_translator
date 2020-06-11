@@ -1,7 +1,7 @@
 # aw_translator
 REDAXO AddOn. Exportiert für Übersetzer und importiert Übersetzungen
 
-**ACHTUNG!** AddOn noch nicht einsetzen! Der Import ist noch nicht umgesetzt!
+**ACHTUNG!** Diese Version noch nicht einsetzen! Der xml Import ist noch nicht umgesetzt!
 
 Das AddOn ermöglicht es, den Inhalt einer Sprache zu exportieren, um den Text an Übersetzer weiterzugeben. Der übersetzte Text kann wieder importiert werden.
 
