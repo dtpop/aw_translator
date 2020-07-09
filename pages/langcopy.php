@@ -4,6 +4,8 @@ if (rex_post('config-submit', 'boolean')) {
     $this->setConfig(rex_post('settings', [
        ['sourcelang','int'],
        ['targetlang','int'],
+       ['version_source','int'],
+       ['version_target','int'],
        ['clearall','int'],
     ]));
     $langcopy = new langcopy();
@@ -34,6 +36,29 @@ foreach (rex_clang::getAll() as $clang) {
     $sel_target->addOption($clang->getName(), $clang->getId());
 }
 
+$sel_version_source = new rex_select();
+$sel_version_source->setId('aw-select-version-source');
+$sel_version_source->setName('settings[version_source]');
+$sel_version_source->setSize(1);
+$sel_version_source->setAttribute('class', 'form-control');
+$sel_version_source->setSelected($this->getConfig('version_source'));
+
+$sel_version_source->addOption('Liveversion', 0);
+$sel_version_source->addOption('Arbeitsversion', 1);
+
+
+$sel_version_target = new rex_select();
+$sel_version_target->setId('aw-select-version-target');
+$sel_version_target->setName('settings[version_target]');
+$sel_version_target->setSize(1);
+$sel_version_target->setAttribute('class', 'form-control');
+$sel_version_target->setSelected($this->getConfig('version_target'));
+
+$sel_version_target->addOption('Liveversion', 0);
+$sel_version_target->addOption('Arbeitsversion', 1);
+
+
+
 $content = '<p>Wählen Sie Quell- und Zielsprache und kopieren Sie alle Inhalte der Quellsprache in die Zielsprache.</p>'
       . '<p><strong>Wichtig! </strong> Erstellen Sie vor der Kopie ein Backup der Datenbank über die Backup-Funktion von Redaxo oder erstellen Sie einen Datenbank Dump!</p>';
 
@@ -45,10 +70,25 @@ $n['label'] = '<label for="aw-select-sourcelang">Quellsprache</label>';
 $n['field'] = $sel_source->get();
 $formElements[] = $n;
 
+if (rex_plugin::get('structure', 'version')->isAvailable()) {
+    $n = [];
+    $n['label'] = '<label for="aw-select-version-source">Version der Quelle</label>';
+    $n['field'] = $sel_version_source->get();
+    $formElements[] = $n;
+}
+
 $n = [];
 $n['label'] = '<label for="aw-select-targetlang">Zielsprache</label>';
 $n['field'] = $sel_target->get();
 $formElements[] = $n;
+
+
+if (rex_plugin::get('structure', 'version')->isAvailable()) {
+    $n = [];
+    $n['label'] = '<label for="aw-select-version-target">Version des Ziels</label>';
+    $n['field'] = $sel_version_target->get();
+    $formElements[] = $n;
+}
 
 $fragment = new rex_fragment();
 $fragment->setVar('elements', $formElements, false);

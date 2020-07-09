@@ -36,41 +36,22 @@ class xmlexport {
             if ($addon->getConfig('module' . $Module['id'])) {
                 if (strpos($addon->getConfig('module' . $Module['id']),'{') !== false) {
                     self::$moduleConfig[$Module['id']] = json_decode($addon->getConfig('module' . $Module['id']),true);
-//                    self::$moduleConfig[$Module['id']] = $addon->getConfig('module' . $Module['id']);
                 } else {
                     self::$moduleConfig[$Module['id']] = explode(',', $addon->getConfig('module' . $Module['id']));
                 }
             }
         }
-
-        $sql = rex_sql::factory();
-        $sql->setQuery('SELECT id FROM ' . rex::getTablePrefix() . 'article WHERE clang_id = ' . self::$langId);
-        self::$allArticles = $sql->getArray();
-        self::$allArticles = array_column(self::$allArticles, 'id');
         
-//        dump(self::$moduleConfig); exit;
-        
-        /*
-        $xml_file_name = 'movies_list.xml';
-        $root = self::$dom->createElement('Movies');
-        $attr_movie_id = new DOMAttr('movie_id', '5467');
-        $movie_node = self::$dom->createElement('movie');
-        $movie_node->setAttributeNode($attr_movie_id);
-        $child_node_title = self::$dom->createElement('Title', 'The Campaign');
-        $movie_node->appendChild($child_node_title);
-        $child_node_year = self::$dom->createElement('Year', 2012);
-        $movie_node->appendChild($child_node_year);
-        $child_node_genre = self::$dom->createElement('Genre', 'The Campaign');
-        $movie_node->appendChild($child_node_genre);
-        $child_node_ratings = self::$dom->createElement('Ratings', 6.2);
-        $movie_node->appendChild($child_node_ratings);
-        $root->appendChild($movie_node);
-        self::$dom->appendChild($root);
-        self::$dom->save($xml_file_name);
+        if ($addon->getConfig('articles_to_translate')) {
+            self::$allArticles = explode(',',$addon->getConfig('articles_to_translate'));
+            self::$allArticles = array_unique(self::$allArticles);
+        } else {
+            $sql = rex_sql::factory();
+            $sql->setQuery('SELECT id FROM ' . rex::getTablePrefix() . 'article WHERE clang_id = ' . self::$langId);
+            self::$allArticles = $sql->getArray();
+            self::$allArticles = array_column(self::$allArticles, 'id');
+        }
 
-        echo "$xml_file_name has been successfully created";
-         * 
-         */
     }
 
     // The object is created from within the class itself
@@ -81,6 +62,7 @@ class xmlexport {
             self::$instance = new xmlexport();
         }
         
+        $addon = rex_addon::get('awtranslator');
         
         self::$dom = new DOMDocument();
         self::$dom->encoding = 'utf-8';
@@ -97,10 +79,12 @@ class xmlexport {
         $root->setAttributeNode($export_lang_code);
         $root->setAttributeNode($export_lang_id);        
         
+        dump($addon->getConfig('version'));
 
         // alle Artikel ...
         foreach (self::$allArticles as $artId) {
-            $slices = rex_article_slice::getSlicesForArticle($artId, self::$langId);
+            $slices = rex_article_slice::getSlicesForArticle($artId, self::$langId, $addon->getConfig('version'));
+            $rex_article = rex_article::get($artId,self::$langId);
             
             $page_node = self::$dom->createElement('page');
             $xml_article_id = new DOMAttr('articleId', $artId);
@@ -108,7 +92,17 @@ class xmlexport {
             $page_node->setAttributeNode($xml_article_id);
             $page_node->setAttributeNode($xml_article_url);
             
-
+            
+            foreach (preg_split('/\R/',$addon->getConfig('additional_meta_fields')) as $meta_info_field) {
+                $meta_info_text = $rex_article->getValue($meta_info_field);
+                $meta_info_node = self::$dom->createElement('metaInfo');
+                $xml_field_name = new DOMAttr('fieldName', $meta_info_field);
+                $xml_node_value = self::$dom->createElement('Value', $rex_article->getValue('yrewrite_description'));
+                $meta_info_node->appendChild($xml_node_value);
+                $meta_info_node->setAttributeNode($xml_field_name);
+                $page_node->appendChild($meta_info_node);
+            }
+            
 
             // Slices, die nicht übersetzt werden sollen entfernen
             foreach ($slices as $k => $slice) {
@@ -116,6 +110,7 @@ class xmlexport {
                     unset($slices[$k]);
                 }
             }
+            
             if ($slices) {
                 $page_node = self::export_slices($slices,$page_node);
             }
@@ -128,25 +123,35 @@ class xmlexport {
         
         $htmlout = self::$dom->saveHTML();
         $htmlout = html_entity_decode($htmlout,ENT_HTML5,'UTF-8');
-//        $htmlout = str_replace(['&lt;bpt id="1"&gt;','&lt;/bpt&gt;','&lt;ept id="1"&gt;','&lt;/ept&gt;',],['<bpt id="1">','</bpt>','<ept id="1">','</ept>'],$htmlout);;
-        file_put_contents($xml_file_name,$htmlout);
         
-//        self::$dom->save($xml_file_name);
+        self::send_export($htmlout);
         
-        echo rex_view::success($xml_file_name.' wurde erstellt.');
         
+//        file_put_contents($xml_file_name,$htmlout);
+        
+//        echo rex_view::success('Export wurde erstellt.');
+        
+    }
+    
+    private static function send_export ($htmlout) {
+        
+            $filename = 'text_to_translate_' . rex_clang::get(self::$langId)->getCode() . '.xml';
 
-//        dump(self::$moduleConfig);
-//        dump(self::$allArticles);
+            ob_end_clean();
+            ob_start();
+            header("Content-Type: text/plain");
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header("Content-Length: " . strlen($htmlout));
+            echo $htmlout;
+            ob_end_flush();
+            exit;
+        
+        
     }
 
     private static function export_slices($slices, $page_node) {
-//        dump($slices);
         foreach ($slices as $slice) {
-//            $slice = rex_article_slice::get($slice->getId());
             $module_config = self::$moduleConfig[$slice->getModuleId()];
-            
-//            dump($module_config);
             
             $slice_node = self::$dom->createElement('slice');
             $xml_slice_id = new DOMAttr('sliceId', $slice->getId());
@@ -190,8 +195,6 @@ class xmlexport {
                         
                     } elseif (is_array($val_content) && isset($val_content[0]) && is_array($val_content[0])) {
                         // mblock                        
-//                        dump($module_value);
-//                        dump($val_content);                        
 
                         $xml_slice_value_type = new DOMAttr('sliceValueType', 'mblock');
                         $xml_slice_value->setAttributeNode($xml_slice_value_type);
@@ -219,10 +222,6 @@ class xmlexport {
                     } elseif (is_array($module_value)) {
                         // mform Elemente
                         $val_content = rex_var::toArray($slice->getValue((int) $val_id));
-//                        dump($slice);
-//                        dump($val_id);
-//                        dump($val_content);
-//                        dump($module_value);
                         $xml_slice_value_type = new DOMAttr('sliceValueType', 'mform');
                         $xml_slice_value->setAttributeNode($xml_slice_value_type);
                         foreach ($module_value as $mblock_label) {

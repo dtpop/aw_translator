@@ -52,6 +52,17 @@ foreach ($Modules as $Modul) {
 //   $field->setNotice('<code>rex_config::get("warehouse","currency")</code>');   
 }
 
+$field = $form->addLinklistField('articles_to_translate');
+$field->setNotice('Artikel, die übersetzt werden sollen auswählen. Kein Auswahl für alle Artikel.');
+$field->setLabel('Zu übersetzende Artikel');
+
+$field = $form->addTextAreaField('additional_meta_fields');
+$field->setLabel('Zusätzliche Meta Felder');
+$field->setNotice('Meta Infos eines Artikels z.B. yrewrite_description. Durch Zeilenschaltung getrennt.');   
+
+
+
+
 $content = $form->get();
 
 $fragment = new rex_fragment();

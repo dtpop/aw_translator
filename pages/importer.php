@@ -1,20 +1,28 @@
 <?php
 
 /*
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-*/
+  error_reporting(E_ALL);
+  ini_set('display_errors', 1);
+  ini_set('display_startup_errors', 1);
+ */
+
 
 if (rex_post('import-submit', 'boolean')) {
-   
-    if (isset($_FILES) && $_FILES['importfile']['size'] > 1) {
-      $file_temp = awtranslator::getDir() . '/' . $_FILES['importfile']['name'];
-      
-      @move_uploaded_file($_FILES['importfile']['tmp_name'], $file_temp);
-      importer::run($file_temp);
-    }
 
+
+    
+    $addon = rex_addon::get('awtranslator');
+
+    if (isset($_FILES) && $_FILES['importfile']['size'] > 1) {
+        $file_temp = awtranslator::getDir() . '/' . $_FILES['importfile']['name'];
+
+        @move_uploaded_file($_FILES['importfile']['tmp_name'], $file_temp);
+        if (trim($addon->getConfig('xmlmode'),'|') == 1) {
+            xmlimport::import($file_temp);
+        } else {
+//            importer::run($file_temp);
+        }
+    }
 }
 
 
