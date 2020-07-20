@@ -94,6 +94,9 @@ class xmlexport {
             
             
             foreach (preg_split('/\R/',$addon->getConfig('additional_meta_fields')) as $meta_info_field) {
+                if (!$meta_info_field) {
+                    continue;
+                }
                 $meta_info_text = $rex_article->getValue($meta_info_field);
                 $meta_info_node = self::$dom->createElement('metaInfo');
                 $xml_field_name = new DOMAttr('fieldName', $meta_info_field);

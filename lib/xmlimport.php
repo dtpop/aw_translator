@@ -85,13 +85,15 @@ class xmlimport {
     
     private static function save_meta_info ($node) {
         $field_name = $node->getAttribute('fieldName');
-        foreach ($node->childNodes as $child) {
-            if ($child->nodeName == 'Value') {
-                $sql = rex_sql::factory();
-                $sql->setTable(rex::getTable('article'));
-                $sql->setWhere('id = :id AND clang_id = :clang_id',['id'=>self::$article_id,'clang_id'=>self::$target_lang_id]);
-                $sql->setValue($field_name,self::get_inner_html($child));
-                $sql->update();
+        if ($field_name) {
+            foreach ($node->childNodes as $child) {
+                if ($child->nodeName == 'Value') {
+                    $sql = rex_sql::factory();
+                    $sql->setTable(rex::getTable('article'));
+                    $sql->setWhere('id = :id AND clang_id = :clang_id',['id'=>self::$article_id,'clang_id'=>self::$target_lang_id]);
+                    $sql->setValue($field_name,self::get_inner_html($child));
+                    $sql->update();
+                }
             }
         }
     }
