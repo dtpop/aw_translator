@@ -32,24 +32,28 @@ class xmlimport {
         self::$slicesql = rex_sql::factory()->setTable(rex::getTable('article_slice'));
         self::$dom = new DOMDocument();
         libxml_use_internal_errors(true);
-//        $filetext = file_get_contents($filename);
-//        $doc->loadHTML($filetext);
-//        $doc->loadXML($filetext);
-        self::$dom->load($filename);
+        $filetext = file_get_contents($filename);
+//        $filetext = preg_replace('/\R/',' ',$filetext);
+        $filetext = preg_replace('/&/','&amp;',$filetext);
+        $filetext = preg_replace('/&amp;amp;/','&amp;',$filetext);
+//        dump($filetext);
+//        self::$dom->loadHTML($filetext);
+        self::$dom->loadXML($filetext);
+//        self::$dom->load($filename);
         self::getDOMNode(self::$dom);
+//        dump(self::$dom);
         
         
     }
     
     private static function getDOMNode(DOMNode $domNode) {
+//        dump($domNode);
         foreach ($domNode->childNodes as $node) {
             if ($node->nodeName == 'page') {
                 self::$article_id = $node->getAttribute('articleId');                
             }
             if ($node->nodeName == 'slice') {
                 self::$slice_id = $node->getAttribute('sliceId');
-            }
-            if ($node->nodeName == 'metaInfo') {
             }
             if ($node->nodeName == 'RedaxoContent') {
                 self::$target_lang_id = $node->getAttribute('TargetLangId');
