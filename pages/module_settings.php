@@ -58,7 +58,7 @@ $field->setLabel('Zu übersetzende Artikel');
 
 $field = $form->addTextAreaField('additional_meta_fields');
 $field->setLabel('Zusätzliche Meta Felder');
-$field->setNotice('Meta Infos eines Artikels z.B. yrewrite_description. Durch Zeilenschaltung getrennt. Wenn der Artikelname in die Übersetzung mit aufgenommen werden soll, so kann dieser mit der Angabe <pre>name</pre> mit aufgenommen werden. Wenn der Kategoriename mit übersetzt werden soll, so kann dieser mit der Angabe <pre>catname</pre> aufgenommen werden.');
+$field->setNotice('Meta Infos eines Artikels z.B. <code>yrewrite_description</code>. Durch Zeilenschaltung getrennt. Wenn der Artikelname in die Übersetzung mit aufgenommen werden soll, so kann dieser mit der Angabe <code>name</code> mit aufgenommen werden. Wenn der Kategoriename mit übersetzt werden soll, so kann dieser mit der Angabe <code>catname</code> aufgenommen werden.');
 
 $content = $form->get();
 
