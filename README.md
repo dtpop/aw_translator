@@ -33,6 +33,12 @@ Der awtranslator erzeugt eine xml Datei, die sämtliche Metainformationen enthä
 
 Die xml Datei kann in eine xliff Datei exportiert werden. Hierzu kann beispielsweise das kostenlose Tool von maxprograms (https://www.maxprograms.com/products/xliffmanager.html) verwendet werden.
 
+## Fehlermeldungen - was tun
+
+Wenn der Import nicht auf die Seite passt, werden Fehlermeldungen ausgegeben in der Art "Slice Id 123 nicht vorhanden.". In diesem Falle passt der Import nicht auf die vorhandene Seite. Entweder wurden die Slices seit dem Export gelöscht oder die gesamte Seitenstruktur hat sich verändert.
+
+Wenn es zu Ooops-Fehlern kommt, gerne den Entwickler benachrichtigen.
+
 ## Warnung
 
 Die Verwendung dieses AddOn geschieht auf eigenes Risiko! Es wird dringend empfohlen vor einem kompletten Einsatz einen Testlauf mit dem Übersetzer zu machen.
