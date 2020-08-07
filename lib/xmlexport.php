@@ -97,10 +97,9 @@ class xmlexport {
                 if (!$meta_info_field) {
                     continue;
                 }
-                $meta_info_text = $rex_article->getValue($meta_info_field);
                 $meta_info_node = self::$dom->createElement('metaInfo');
                 $xml_field_name = new DOMAttr('fieldName', $meta_info_field);
-                $xml_node_value = self::$dom->createElement('Value', $rex_article->getValue('yrewrite_description'));
+                $xml_node_value = self::$dom->createElement('Value', $rex_article->getValue($meta_info_field));
                 $meta_info_node->appendChild($xml_node_value);
                 $meta_info_node->setAttributeNode($xml_field_name);
                 $page_node->appendChild($meta_info_node);
