@@ -20,6 +20,7 @@ class xmlimport {
     private static $target_lang_id = 0;
     private static $dom;
     private static $slicesql;
+    private static $errors = [];
     
     private function __construct() {
         
@@ -117,12 +118,18 @@ class xmlimport {
         self::$slicesql->setTable(rex::getTable('article_slice'));
         self::$slicesql->setWhere('id = :id AND article_id = :article_id AND clang_id = :clang_id',['id'=>self::$slice_id,'article_id'=>self::$article_id,'clang_id'=>self::$target_lang_id]);
         self::$slicesql->setValue('value'.self::$slice_value_id,$value);
-        self::$slicesql->update();        
+        if (self::$slicesql->update()->getRows() == 0) {
+            echo rex_view::error('Slice Id '.self::$slice_id.' nicht gefunden.');            
+        }
     }
     
     private static function save_mform_value ($node) {
         // Vorhandenen Slice einlesen
         $slice = rex_article_slice::getArticleSliceById(self::$slice_id, self::$target_lang_id);
+        if (!$slice) {
+            echo rex_view::error('Slice Id '.self::$slice_id.' nicht gefunden.');
+            return;
+        }
         $slice_value = rex_var::toArray($slice->getValue((int) self::$slice_value_id));
         // JSON Wert auslesen
         foreach ($node->childNodes as $child) {
@@ -144,6 +151,10 @@ class xmlimport {
     
     private static function save_mblock_value ($node) {
         $slice = rex_article_slice::getArticleSliceById(self::$slice_id, self::$target_lang_id);
+        if (!$slice) {
+            echo rex_view::error('Slice Id '.self::$slice_id.' nicht gefunden.');
+            return;
+        }
         $slice_value = rex_var::toArray($slice->getValue((int) self::$slice_value_id));
         
         foreach ($node->childNodes as $child) {
