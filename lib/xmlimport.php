@@ -123,6 +123,7 @@ class xmlimport {
         self::$slicesql->setTable(rex::getTable('article_slice'));
         self::$slicesql->setWhere('id = :id AND article_id = :article_id AND clang_id = :clang_id',['id'=>self::$slice_id,'article_id'=>self::$article_id,'clang_id'=>self::$target_lang_id]);
         self::$slicesql->setValue('value'.self::$slice_value_id,$value);
+        self::$slicesql->update();
     }
     
     private static function save_mform_value ($node) {
