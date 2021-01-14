@@ -101,7 +101,7 @@ class xmlimport {
                     $sql = rex_sql::factory();
                     $sql->setTable(rex::getTable('article'));
                     $sql->setWhere('id = :id AND clang_id = :clang_id',['id'=>self::$article_id,'clang_id'=>self::$target_lang_id]);
-                    $sql->setValue($field_name,self::get_inner_html($child));
+                    $sql->setValue($field_name,html_entity_decode(self::get_inner_html($child)));
                     $sql->update();
                 }
             }
@@ -124,6 +124,7 @@ class xmlimport {
         self::$slicesql->setWhere('id = :id AND article_id = :article_id AND clang_id = :clang_id',['id'=>self::$slice_id,'article_id'=>self::$article_id,'clang_id'=>self::$target_lang_id]);
         self::$slicesql->setValue('value'.self::$slice_value_id,$value);
         self::$slicesql->update();
+//        dump(self::$slicesql->getRows());
     }
     
     private static function save_mform_value ($node) {
