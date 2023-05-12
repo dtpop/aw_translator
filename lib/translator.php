@@ -44,7 +44,7 @@ class translator {
                 $slices = rex_article_slice::getSlicesForArticle($artId['id'], $langId);
 
                 foreach ($slices as $slice) {
-                    $module_id = $slice->getValue('module_id');
+                    $module_id = $slice->getModuleId();
                     if (!is_array($modulesConfig[$module_id]) || $modulesConfig[$module_id][0] == '')
                         continue;
                     // Für jeden in der Konfiguration definierten value des Slices den Wert auslesen
